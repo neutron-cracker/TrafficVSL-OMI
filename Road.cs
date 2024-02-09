@@ -10,8 +10,9 @@ public class Road
     private readonly List<Car> _cars;
 
     public float AverageSpeed => _cars.Average(car => (float)car.Speed);
+    public IList<Car?> Sites => _sites;
 
-    public Road(int numberOfSites, int numberOfCars, int vMax, int p)
+    public Road(int numberOfSites, int numberOfCars, int vMax, float p)
     {
         _numberOfSites = numberOfSites;
         _numberOfCars = numberOfCars;
@@ -57,24 +58,29 @@ public class Road
             var nullableCar = _sites[i];
             if (!nullableCar.HasValue) continue;
 
-            UpdateCarSpeed(nullableCar.Value, i);
+            var carValue = nullableCar.Value;
 
-            var newIndex = nullableCar.Value.Speed + i;
+            UpdateCarSpeed(ref carValue, i);
+
+            var newIndex = carValue.Speed + i;
             newIndex %= _numberOfSites;
-            newCars[newIndex] = nullableCar.Value;
+            newCars[newIndex] = carValue;
         }
 
         _sites = newCars;
     }
 
-    private void UpdateCarSpeed(Car car, int oldIndex)
+    private void UpdateCarSpeed(ref Car car, int oldIndex)
     {
         var nextCarIndex = GetNextCarIndexWithinRange(oldIndex + 1, car.Speed + 1);
 
         if (nextCarIndex.HasValue)
         {
             // Slowing down
-            var newSpeed = nextCarIndex.Value - oldIndex;
+            var newSpeed = nextCarIndex.Value < oldIndex
+                ? nextCarIndex.Value + _numberOfSites - oldIndex
+                : nextCarIndex.Value - oldIndex;
+
             car.Speed = newSpeed;
         }
         else
@@ -88,7 +94,7 @@ public class Road
         
         // Reduce speed
         var shouldAcceptSlowDown = Random.Shared.NextSingle() < _p;
-        if (shouldAcceptSlowDown)
+        if (shouldAcceptSlowDown && car.Speed > 0)
         {
             car.Speed -= 1;
         }
@@ -96,13 +102,18 @@ public class Road
     
     private int? GetNextCarIndexWithinRange(int startingIndex, int range)
     {
+        int currentIndex = startingIndex;
         for (int i = 0; i < range; i++)
         {
-            var nextCar = _sites[startingIndex + i];
+            currentIndex %= _numberOfSites;
+
+            var nextCar = _sites[currentIndex];
             if (nextCar.HasValue)
             {
-                return startingIndex + i;
+                return currentIndex;
             }
+
+            currentIndex++;
         }
 
         return null;
