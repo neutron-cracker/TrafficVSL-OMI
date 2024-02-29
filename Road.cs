@@ -3,27 +3,56 @@
 public class Road
 {
     private readonly int _numberOfSites;
-    private readonly int _numberOfCars;
     private readonly int _vMax;
     private readonly float _p;
-    private Car?[] _sites;
+    private readonly int _vslSpeed;
     private readonly List<Car> _cars;
+    private int _numberOfCars;
 
-    public float AverageSpeed => _cars.Average(car => (float)car.Speed);
-    public IList<Car?> Sites => _sites;
-
-    public Road(int numberOfSites, int numberOfCars, int vMax, float p)
+    public int TotalSpeed => _cars.Sum(x => x.Speed);
+    public Road(int numberOfSites, int maximumNumberOfCars, int vMax, float p, int vslSpeed)
     {
         _numberOfSites = numberOfSites;
-        _numberOfCars = numberOfCars;
         _vMax = vMax;
         _p = p;
-        _sites = new Car?[numberOfSites];
-        _cars = new List<Car>(numberOfCars);
+        _vslSpeed = vslSpeed;
+        _cars = new List<Car>(maximumNumberOfCars);
 
         FillRoad();
     }
 
+    public void Reset(int numberOfCars)
+    {
+        _cars.Clear();
+        _numberOfCars = numberOfCars;
+        FillRoad();
+    }
+
+    public IEnumerable<Car?> GetSites()
+    {
+        var car = _cars.MinBy(x => x.Location)!;
+        for (int i = 0; i < _numberOfSites; i++)
+        {
+            if (car.Location == i)
+            {
+                car = car.GetNext();
+                yield return car;
+            }
+            else
+            {
+                yield return null;
+            }
+        }
+    }
+
+    public void IterateRounds(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            IterateOneRound();
+        }
+    }
+    
     private void FillRoad()
     {
         var allIndices = Enumerable.Range(0, _numberOfSites).ToArray();
@@ -32,95 +61,36 @@ public class Road
 
         foreach (var carIndex in allIndices.Take(_numberOfCars))
         {
-            var car = new Car
+            var car = new Car(_numberOfSites)
             {
-                Speed = 0
+                Speed = 0,
+                Location = carIndex,
             };
 
-            _sites[carIndex] = car;
             _cars.Add(car);
         }
-    }
-    
-    public void IterateRounds(int count)
-    {
-        for (int i = 0; i < count; i++)
+        
+        _cars.Sort((a, b)=> a.Location.CompareTo(b.Location));
+
+        for (int i = 0; i < _numberOfCars; i++)
         {
-            IterateOneRound();
+            var car = _cars[i];
+            var nextCar = _cars[(i + 1) % _numberOfCars];
+            car.SetNext(nextCar);
         }
     }
-
+    
     private void IterateOneRound()
     {
-        var newCars = new Car?[_numberOfSites];
-        for (int i = 0; i < _numberOfSites; i++)
-        {
-            var nullableCar = _sites[i];
-            if (!nullableCar.HasValue) continue;
-
-            var carValue = nullableCar.Value;
-
-            UpdateCarSpeed(ref carValue, i);
-
-            var newIndex = carValue.Speed + i;
-            newIndex %= _numberOfSites;
-            newCars[newIndex] = carValue;
-        }
-
-        _sites = newCars;
+        foreach (var car in _cars) 
+            UpdateCarSpeed(car);
     }
 
-    private void UpdateCarSpeed(ref Car car, int oldIndex)
+    private void UpdateCarSpeed(Car car)
     {
-        var nextCarIndex = GetNextCarIndexWithinRange(oldIndex + 1, car.Speed + 1);
-
-        if (nextCarIndex.HasValue)
-        {
-            // Slowing down
-            var newSpeed = nextCarIndex.Value < oldIndex
-                ? nextCarIndex.Value + _numberOfSites - oldIndex
-                : nextCarIndex.Value - oldIndex;
-
-            car.Speed = newSpeed;
-        }
-        else
-        {
-            if (car.Speed < _vMax)
-            {
-                // Accelerating
-                car.Speed += 1;
-            }
-        }
-        
-        // Reduce speed
-        var shouldAcceptSlowDown = Random.Shared.NextSingle() < _p;
-        if (shouldAcceptSlowDown && car.Speed > 0)
-        {
-            car.Speed -= 1;
-        }
+        car.Accelerate(_vMax);
+        car.BreakIfNeeded();
+        car.RandomiseSpeed(Random.Shared, _p);
+        car.Drive();
     }
-    
-    private int? GetNextCarIndexWithinRange(int startingIndex, int range)
-    {
-        int currentIndex = startingIndex;
-        for (int i = 0; i < range; i++)
-        {
-            currentIndex %= _numberOfSites;
-
-            var nextCar = _sites[currentIndex];
-            if (nextCar.HasValue)
-            {
-                return currentIndex;
-            }
-
-            currentIndex++;
-        }
-
-        return null;
-    }
-}
-
-public struct Car
-{
-    public int Speed { get; set; }
 }

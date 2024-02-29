@@ -4,7 +4,7 @@ public static class RoadPrinter
 {
     public static void PrintDebugLine(Road road)
     {
-        var siteText = road.Sites.Select(GetDebugSiteText);
+        var siteText = road.GetSites().Select(GetDebugSiteText);
         var text = string.Concat(siteText);
         Console.WriteLine(text);
     }
