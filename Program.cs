@@ -4,7 +4,7 @@ using ScottPlot;
 using TrafficVSL_OMI;
 
 const int scaleFactorTraffic = 1000;
-const int maximumCars = 500;
+const int maximumCars = 1000;
 const int iterationsWithSameDensity = 10;
 
 List<double> averageTrafficFlowPer100 = [];
@@ -23,6 +23,8 @@ Console.WriteLine("Starting Iterations");
 //     RoadPrinter.PrintDebugLine(road);
 // }
 // Console.WriteLine("Starting Iterations");
+// Console.WriteLine();
+// Console.WriteLine();
 //
 // road = new(100, 0, 5, 0.35f, 4);
 // road.Reset(30);
@@ -32,6 +34,8 @@ Console.WriteLine("Starting Iterations");
 //     RoadPrinter.PrintDebugLine(road);
 // }
 // Console.WriteLine("Starting Iterations");
+// Console.WriteLine();
+// Console.WriteLine();
 //
 // road = new(100, 0, 5, 0.35f, 3);
 // road.Reset(30);
@@ -41,6 +45,8 @@ Console.WriteLine("Starting Iterations");
 //     RoadPrinter.PrintDebugLine(road);
 // }
 // Console.WriteLine("Starting Iterations");
+// Console.WriteLine();
+// Console.WriteLine();
 //
 // road = new(100, 0, 5, 0.35f, 2);
 // road.Reset(30);
@@ -108,6 +114,9 @@ void PlotGraph(List<double> xs, List<double> ys, string fileName)
     Plot myPlot = new();
     var scatter = myPlot.Add.Scatter(xs.ToArray(), ys.ToArray());
     scatter.Smooth = true;
+    scatter.LinePattern = LinePattern.Solid;
+    scatter.MarkerSize = 0;
+    scatter.LineWidth = 2;
     //scatter.LineStyle = LineStyle.None;
     scatter.Color = Color.Gray(200);
 

@@ -90,6 +90,7 @@ public class Road
     {
         car.Accelerate(_vMax);
         car.BreakIfNeeded();
+        car.ApplySpeedLimit(_vslSpeed);
         car.RandomiseSpeed(Random.Shared, _p);
         car.Drive();
     }
