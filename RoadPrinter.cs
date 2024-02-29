@@ -5,7 +5,7 @@ public static class RoadPrinter
     public static void PrintDebugLine(Road road)
     {
         var siteText = road.GetSites().Select(GetDebugSiteText);
-        var text = string.Concat(siteText);
+        var text = string.Concat(siteText) + "  Total Speed: " + road.TotalSpeed;
         Console.WriteLine(text);
     }
 

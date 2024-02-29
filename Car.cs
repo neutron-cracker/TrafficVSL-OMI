@@ -32,9 +32,9 @@ public class Car(int numberOfSites)
 
     public void ApplySpeedLimit(int speedLimitJam)
     {
-        const int maximumDistanceFirstCar = 2 + 1;
-        const int maximumDistanceSecondCar = maximumDistanceFirstCar + 2;
-        const int maximumDistanceThirdCar = maximumDistanceSecondCar + 2;
+        const int maximumDistanceFirstCar = 3;
+        const int maximumDistanceSecondCar = maximumDistanceFirstCar + 1;
+        const int maximumDistanceThirdCar = maximumDistanceSecondCar + 1;
         
         if (Speed > speedLimitJam) return;
         

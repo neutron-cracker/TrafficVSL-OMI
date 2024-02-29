@@ -4,8 +4,8 @@ using ScottPlot;
 using TrafficVSL_OMI;
 
 const int scaleFactorTraffic = 1000;
-const int maximumCars = 150;
-const int iterationsWithSameDensity = 100;
+const int maximumCars = 500;
+const int iterationsWithSameDensity = 10;
 
 List<double> averageTrafficFlowPer100 = [];
 List<double> averageTrafficCount = [];
@@ -15,17 +15,44 @@ var trafficCount = new double[iterationsWithSameDensity];
 
 Console.WriteLine("Starting Iterations");
 
-Road road = new(100, 0, 5, 0.35f, 5);
-road.Reset(20);
-for (int i = 0; i < 100; i++)
-{
-    road.IterateRounds(1);
-    RoadPrinter.PrintDebugLine(road);
-}
+// Road road = new(100, 0, 5, 0.35f, 5);
+// road.Reset(30);
+// for (int i = 0; i < 100; i++)
+// {
+//     road.IterateRounds(1);
+//     RoadPrinter.PrintDebugLine(road);
+// }
+// Console.WriteLine("Starting Iterations");
+//
+// road = new(100, 0, 5, 0.35f, 4);
+// road.Reset(30);
+// for (int i = 0; i < 100; i++)
+// {
+//     road.IterateRounds(1);
+//     RoadPrinter.PrintDebugLine(road);
+// }
+// Console.WriteLine("Starting Iterations");
+//
+// road = new(100, 0, 5, 0.35f, 3);
+// road.Reset(30);
+// for (int i = 0; i < 100; i++)
+// {
+//     road.IterateRounds(1);
+//     RoadPrinter.PrintDebugLine(road);
+// }
+// Console.WriteLine("Starting Iterations");
+//
+// road = new(100, 0, 5, 0.35f, 2);
+// road.Reset(30);
+// for (int i = 0; i < 100; i++)
+// {
+//     road.IterateRounds(1);
+//     RoadPrinter.PrintDebugLine(road);
+// }
+//
+// return;
 
-return;
-
-//Road road = new(1000, 0, 5, 0.35f, 5);
+Road road = new(1000, 0, 5, 0.35f, 5);
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-5.png");
 
@@ -56,7 +83,7 @@ void RunModel()
     {
         road.Reset(numberOfCars);
         
-        for (int numberOfIterations = 0; numberOfIterations < 100; numberOfIterations++)
+        for (int numberOfIterations = 0; numberOfIterations < iterationsWithSameDensity; numberOfIterations++)
         {
             road.IterateRounds(100);
 
@@ -80,7 +107,8 @@ void PlotGraph(List<double> xs, List<double> ys, string fileName)
     // plot the data
     Plot myPlot = new();
     var scatter = myPlot.Add.Scatter(xs.ToArray(), ys.ToArray());
-    scatter.LineStyle = LineStyle.None;
+    scatter.Smooth = true;
+    //scatter.LineStyle = LineStyle.None;
     scatter.Color = Color.Gray(200);
 
     // display the plot
