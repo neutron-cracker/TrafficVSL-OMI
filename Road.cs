@@ -35,8 +35,9 @@ public class Road
         {
             if (car.Location == i)
             {
+                var returnedCar = car;
                 car = car.GetNext();
-                yield return car;
+                yield return returnedCar;
             }
             else
             {
@@ -63,7 +64,6 @@ public class Road
         {
             var car = new Car(_numberOfSites)
             {
-                Speed = 0,
                 Location = carIndex,
             };
 

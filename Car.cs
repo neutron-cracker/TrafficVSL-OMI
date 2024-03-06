@@ -3,7 +3,7 @@
 public class Car(int numberOfSites)
 {
     private Car _nextCar = null!;
-    public int Speed { get; set; } = 0;
+    public int Speed { get; private set; }
     public required int Location { get; set; }
 
     public void SetNext(Car nextCar)
@@ -24,6 +24,10 @@ public class Car(int numberOfSites)
     public void BreakIfNeeded()
     {
         var distance = DistanceToCar(_nextCar);
+        if (distance == 0)
+        {
+            throw new Exception("Should never happen");
+        }
         if (Speed >= distance)
         {
             Speed = distance - 1;
@@ -32,20 +36,14 @@ public class Car(int numberOfSites)
 
     public void ApplySpeedLimit(int speedLimitJam)
     {
-        const int maximumDistanceFirstCar = 10;
-        const int maximumDistanceSecondCar = maximumDistanceFirstCar + 2;
-        const int maximumDistanceThirdCar = maximumDistanceSecondCar + 2;
-        
         if (Speed <= speedLimitJam) return;
         
         var firstCar = _nextCar;
-        if (DistanceToCar(firstCar) > maximumDistanceFirstCar) return;
+        if (DistanceToCar(firstCar) > Constants.DistanceStartSpeedLimit) return;
         
         var secondCar = firstCar._nextCar;
-        if (DistanceToCar(secondCar) > maximumDistanceSecondCar) return;
-
         var thirdCar = secondCar._nextCar;
-        if (DistanceToCar(thirdCar) > maximumDistanceThirdCar) return;
+        if (DistanceToCar(thirdCar) > Constants.DistanceToLastCar) return;
 
         Speed = speedLimitJam;
     }
