@@ -12,6 +12,7 @@ public class Road
     private readonly int _backBufferSize;
 
     public int TotalSpeed => _cars.Sum(x => x.Speed);
+    public int TrafficIntensity => _cars.Count(x => x.IsInTrafficJam(_carDistance));
     public Road(ModelConfiguration modelConfiguration)
     {
         _numberOfSites = modelConfiguration.NumberOfSites;

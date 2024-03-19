@@ -5,14 +5,16 @@ using TrafficVSL_OMI;
 
 const int scaleFactorTraffic = 1000;
 const int maximumCars = 100;
-const int iterationsWithSameDensity = 10;
+const int iterationsWithSameDensity = 100;
 
 List<double> averageTrafficFlowPer100 = [];
 List<double> averageTrafficCount = [];
+List<double> averageTrafficJamIntensity = [];
 
 List<List<CsvItem>> allCsvItems = [];
 
 var trafficFlowPer100 = new double[iterationsWithSameDensity];
+var trafficIntensityPer100 = new double[iterationsWithSameDensity];
 
 // Console.WriteLine("Starting Iterations");
 //
@@ -58,6 +60,7 @@ var trafficFlowPer100 = new double[iterationsWithSameDensity];
 // }
 //
 // return;
+
 ModelConfiguration modelConfiguration = new(BackBufferSize: 5,
     CarDistance: 1,
     NumberOfSites: 100,
@@ -69,27 +72,27 @@ ModelConfiguration modelConfiguration = new(BackBufferSize: 5,
 Road road = new(modelConfiguration);
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-5");
-SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
+SaveResultsToCsvItems();
 
 road = new Road(modelConfiguration with { DynamicSpeedLimit = 4});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-4");
-SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
+SaveResultsToCsvItems();
 
 road = new Road(modelConfiguration with { DynamicSpeedLimit = 3});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-3");
-SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
+SaveResultsToCsvItems();
 
 road = new Road(modelConfiguration with { DynamicSpeedLimit = 2});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-2");
-SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
+SaveResultsToCsvItems();
 
 road = new Road(modelConfiguration with { DynamicSpeedLimit = 1});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-1");
-SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
+SaveResultsToCsvItems();
 
 var finalItems = GetCsvItems();
 CsvExporter.Export("test", finalItems);
@@ -100,6 +103,7 @@ void RunModel()
 {
     averageTrafficFlowPer100.Clear();
     averageTrafficCount.Clear();
+    averageTrafficJamIntensity.Clear();
 
     for (int numberOfCars = 2; numberOfCars < maximumCars; numberOfCars++)
     {
@@ -110,13 +114,17 @@ void RunModel()
             road.IterateRounds(100);
 
             var scaledAverageTrafficCount = road.TotalSpeed * scaleFactorTraffic;
-        
-            trafficFlowPer100[numberOfIterations] = (scaledAverageTrafficCount);
+            var scaledAverageTrafficJamIntensity = road.TrafficIntensity * scaleFactorTraffic;
+
+            trafficFlowPer100[numberOfIterations] = scaledAverageTrafficCount;
+            trafficIntensityPer100[numberOfIterations] = scaledAverageTrafficJamIntensity;
         }
 
         var averageFlow = trafficFlowPer100.Average();
+        var averageJamIntensity = trafficIntensityPer100.Average();
         averageTrafficFlowPer100.Add(averageFlow);
         averageTrafficCount.Add(numberOfCars);
+        averageTrafficJamIntensity.Add(averageJamIntensity);
     
         Console.WriteLine("Iteration" + numberOfCars);
         Console.CursorTop--;
@@ -142,9 +150,10 @@ void PlotGraph(List<double> xs, List<double> ys, string fileName)
     myPlot.SavePng($"{fileName}.png", 500, 500);
 }
 
-void SaveResultsToCsvItems(IEnumerable<double> xs, IEnumerable<double> ys)
+void SaveResultsToCsvItems()
 {
-    var newItems = xs.Zip(ys).Select(tuple => new CsvItem(tuple.First, tuple.Second)).ToList();
+    var newItems = averageTrafficCount.Zip(averageTrafficFlowPer100, averageTrafficJamIntensity)
+        .Select(x => new CsvItem(x.First, x.Second, x.Third)).ToList();
     allCsvItems.Add(newItems);
 }
 
@@ -153,17 +162,32 @@ IEnumerable<FinalCsvItem> GetCsvItems()
     for (int i = 0; i < allCsvItems[0].Count; i++)
     {
 
-        yield return new FinalCsvItem(allCsvItems[0][i].X,
-            allCsvItems[0][i].Y,
-            allCsvItems[1][i].Y,
-            allCsvItems[2][i].Y,
-            allCsvItems[3][i].Y,
-            allCsvItems[4][i].Y);
+        yield return new FinalCsvItem(allCsvItems[0][i].TrafficCount,
+            allCsvItems[0][i].TrafficFlow,
+            allCsvItems[1][i].TrafficFlow,
+            allCsvItems[2][i].TrafficFlow,
+            allCsvItems[3][i].TrafficFlow,
+            allCsvItems[4][i].TrafficFlow,
+            allCsvItems[0][i].TrafficJamIntensity,
+            allCsvItems[1][i].TrafficJamIntensity,
+            allCsvItems[2][i].TrafficJamIntensity,
+            allCsvItems[3][i].TrafficJamIntensity,
+            allCsvItems[4][i].TrafficJamIntensity);
     }
 }
 
-file record CsvItem(double X, double Y);
+file record CsvItem(double TrafficCount, double TrafficFlow, double TrafficJamIntensity);
 
-file record FinalCsvItem(double X, double Y1, double Y2, double Y3, double Y4, double Y5);
+file record FinalCsvItem(double TrafficCount, 
+    double TrafficFlow1, 
+    double TrafficFlow2, 
+    double TrafficFlow3, 
+    double TrafficFlow4, 
+    double TrafficFlow5,
+    double TrafficJamIntensity1, 
+    double TrafficJamIntensity2, 
+    double TrafficJamIntensity3, 
+    double TrafficJamIntensity4, 
+    double TrafficJamIntensity5);
 
 
