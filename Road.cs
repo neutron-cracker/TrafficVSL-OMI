@@ -8,15 +8,19 @@ public class Road
     private readonly int _vslSpeed;
     private readonly List<Car> _cars;
     private int _numberOfCars;
+    private readonly int _carDistance;
+    private readonly int _backBufferSize;
 
     public int TotalSpeed => _cars.Sum(x => x.Speed);
-    public Road(int numberOfSites, int maximumNumberOfCars, int vMax, float p, int vslSpeed)
+    public Road(ModelConfiguration modelConfiguration)
     {
-        _numberOfSites = numberOfSites;
-        _vMax = vMax;
-        _p = p;
-        _vslSpeed = vslSpeed;
-        _cars = new List<Car>(maximumNumberOfCars);
+        _numberOfSites = modelConfiguration.NumberOfSites;
+        _vMax = modelConfiguration.MaximumSpeed;
+        _p = modelConfiguration.ProbabilityToSlowDown;
+        _vslSpeed = modelConfiguration.DynamicSpeedLimit;
+        _cars = new List<Car>(modelConfiguration.NumberOfCars);
+        _backBufferSize = modelConfiguration.BackBufferSize;
+        _carDistance = modelConfiguration.CarDistance;
 
         FillRoad();
     }
@@ -90,7 +94,7 @@ public class Road
     {
         car.Accelerate(_vMax);
         car.BreakIfNeeded();
-        car.ApplySpeedLimit(_vslSpeed);
+        car.ApplySpeedLimit(_vslSpeed, _backBufferSize, _carDistance);
         car.RandomiseSpeed(Random.Shared, _p);
         car.Drive();
     }

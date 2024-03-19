@@ -4,7 +4,7 @@ using ScottPlot;
 using TrafficVSL_OMI;
 
 const int scaleFactorTraffic = 1000;
-const int maximumCars = 1000;
+const int maximumCars = 100;
 const int iterationsWithSameDensity = 10;
 
 List<double> averageTrafficFlowPer100 = [];
@@ -58,28 +58,35 @@ var trafficFlowPer100 = new double[iterationsWithSameDensity];
 // }
 //
 // return;
+ModelConfiguration modelConfiguration = new(BackBufferSize: 5,
+    CarDistance: 1,
+    NumberOfSites: 100,
+    NumberOfCars: 0,
+    MaximumSpeed: 5,
+    ProbabilityToSlowDown: 0.35f,
+    DynamicSpeedLimit: 5);
 
-Road road = new(1000, 0, 5, 0.35f, 5);
+Road road = new(modelConfiguration);
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-5");
 SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
 
-road = new(1000, 0, 5, 0.35f, 4);
+road = new Road(modelConfiguration with { DynamicSpeedLimit = 4});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-4");
 SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
 
-road = new(1000, 0, 5, 0.35f, 3);
+road = new Road(modelConfiguration with { DynamicSpeedLimit = 3});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-3");
 SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
 
-road = new(1000, 0, 5, 0.35f, 2);
+road = new Road(modelConfiguration with { DynamicSpeedLimit = 2});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-2");
 SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);
 
-road = new(1000, 0, 5, 0.35f, 1);
+road = new Road(modelConfiguration with { DynamicSpeedLimit = 1});
 RunModel();
 PlotGraph(averageTrafficCount, averageTrafficFlowPer100, "scatterplot-1");
 SaveResultsToCsvItems(averageTrafficCount, averageTrafficFlowPer100);

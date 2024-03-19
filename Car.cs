@@ -34,18 +34,14 @@ public class Car(int numberOfSites)
         }
     }
 
-    public void ApplySpeedLimit(int speedLimitJam)
+    public void ApplySpeedLimit(int speedLimitJam, int backBufferSize, int carDistance)
     {
-        if (Speed <= speedLimitJam) return;
-        
-        var firstCar = _nextCar;
-        if (DistanceToCar(firstCar) > Constants.DistanceStartSpeedLimit) return;
-        
-        var secondCar = firstCar._nextCar;
-        var thirdCar = secondCar._nextCar;
-        if (DistanceToCar(thirdCar) > Constants.DistanceToLastCar) return;
-
-        Speed = speedLimitJam;
+        if (Speed <= speedLimitJam 
+            && DistanceToCar(_nextCar) <= backBufferSize
+            && DistanceToCar(_nextCar._nextCar) <= carDistance)
+        {
+            Speed = speedLimitJam;
+        }
     }
 
     private int DistanceToCar(Car car)
