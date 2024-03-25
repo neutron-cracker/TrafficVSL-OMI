@@ -34,7 +34,7 @@ public class Road
         _numberOfCars = numberOfCars;
         FillRoad();
     }
-
+    
     public IEnumerable<Car?> GetSites()
     {
         var car = _cars.MinBy(x => x.Location)!;
