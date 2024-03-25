@@ -3,7 +3,7 @@
 public class CsvModelRunner
 {
     private const int MaximumCars = 100;
-    private const int IterationsWithSameDensity = 100;
+    private const int IterationsWithSameDensity = 1000;
     private readonly ModelConfiguration _standardModelConfiguration = new(BackBufferSize: 5,
         CarDistance: 1,
         NumberOfSites: 100,
@@ -51,19 +51,27 @@ public class CsvModelRunner
         _trafficCount.Clear();
         _trafficFlow.Clear();
         _trafficJamIntensity.Clear();
+        List<double> currentTrafficFlow = new(IterationsWithSameDensity);
+        List<double> currentJamIntensity = new(IterationsWithSameDensity);
     
         for (int numberOfCars = 2; numberOfCars < MaximumCars; numberOfCars++)
         {
+            currentTrafficFlow.Clear();
+            currentJamIntensity.Clear();
+
             road.Reset(numberOfCars);
             road.IterateRounds(100);
             
             for (int numberOfIterations = 0; numberOfIterations < IterationsWithSameDensity; numberOfIterations++)
             {
                 road.IterateRounds(100);
-                _trafficCount.Add(numberOfCars);
-                _trafficFlow.Add(road.TrafficFlow);
-                _trafficJamIntensity.Add(road.TrafficIntensity);
+                currentTrafficFlow.Add(road.TrafficFlow);
+                currentJamIntensity.Add(road.TrafficIntensity);
             }
+            
+            _trafficCount.Add(numberOfCars);
+            _trafficFlow.Add(currentTrafficFlow.Average());
+            _trafficJamIntensity.Add(currentJamIntensity.Average());
         }
     }
     
