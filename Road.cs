@@ -8,13 +8,13 @@ public class Road
     private readonly int _vslSpeed;
     private readonly List<Car> _cars;
     private int _numberOfCars;
-    private readonly int _carDistance;
+    private readonly int _carDistanceTrafficJam;
     private readonly int _backBufferSize;
 
     public double TrafficFlow => _cars.Average(x => x.Speed);
 
     public double TrafficIntensity =>
-        (double)_cars.Count(x => x.IsInTrafficJam(_carDistance)) / _numberOfCars;
+        (double)_cars.Count(x => x.IsInTrafficJam(_carDistanceTrafficJam)) / _numberOfCars;
     public Road(ModelConfiguration modelConfiguration)
     {
         _numberOfSites = modelConfiguration.NumberOfSites;
@@ -23,7 +23,7 @@ public class Road
         _vslSpeed = modelConfiguration.DynamicSpeedLimit;
         _cars = new List<Car>(modelConfiguration.NumberOfCars);
         _backBufferSize = modelConfiguration.BackBufferSize;
-        _carDistance = modelConfiguration.CarDistance;
+        _carDistanceTrafficJam = modelConfiguration.CarDistance;
 
         FillRoad();
     }
@@ -97,7 +97,7 @@ public class Road
     {
         car.Accelerate(_vMax);
         car.BreakIfNeeded();
-        car.ApplySpeedLimit(_vslSpeed, _backBufferSize, _carDistance);
+        car.ApplySpeedLimit(_vslSpeed, _backBufferSize, _carDistanceTrafficJam);
         car.RandomiseSpeed(Random.Shared, _p);
         car.Drive();
     }

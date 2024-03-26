@@ -34,17 +34,19 @@ public class Car(int numberOfSites)
         }
     }
 
-    public void ApplySpeedLimit(int speedLimitJam, int backBufferSize, int carDistance)
+    public void ApplySpeedLimit(int speedLimitJam, int backBufferSize, int carDistanceInTrafficJam)
     {
-        if (Speed > speedLimitJam 
-            && DistanceToCar(_nextCar) <= backBufferSize
-            && DistanceToCar(_nextCar._nextCar) <= carDistance)
+        if (Speed > speedLimitJam
+            && (DistanceToCar(_nextCar) <= carDistanceInTrafficJam 
+                || DistanceToCar(_nextCar) <= backBufferSize
+                && DistanceToCar(_nextCar._nextCar) <= carDistanceInTrafficJam))
         {
             Speed = speedLimitJam;
         }
     }
 
-    public bool IsInTrafficJam(int carDistance) => DistanceToCar(_nextCar) <= carDistance;
+    public bool IsInTrafficJam(int carDistanceInTrafficJam) 
+        => DistanceToCar(_nextCar) <= carDistanceInTrafficJam;
 
     private int DistanceToCar(Car car)
     {
