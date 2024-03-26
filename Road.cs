@@ -11,10 +11,35 @@ public class Road
     private readonly int _carDistanceTrafficJam;
     private readonly int _backBufferSize;
 
-    public double TrafficFlow => _cars.Average(x => x.Speed);
+    public double TrafficFlow
+    {
+        get
+        {
+            double totalCarSpeed = 0;
+            foreach (var car in _cars)
+            {
+                totalCarSpeed += car.Speed;
+            }
+            return totalCarSpeed / _numberOfCars;
+        }
+    }
 
-    public double TrafficIntensity =>
-        (double)_cars.Count(x => x.IsInTrafficJam(_carDistanceTrafficJam)) / _numberOfCars;
+    public double TrafficIntensity
+    {
+        get
+        {
+            int trafficJamCount = 0;
+            foreach (var car in _cars)
+            {
+                if (car.IsInTrafficJam(_carDistanceTrafficJam))
+                {
+                    trafficJamCount++;
+                }
+            }
+            return (double)trafficJamCount / _numberOfCars;
+        }
+    }
+
     public Road(ModelConfiguration modelConfiguration)
     {
         _numberOfSites = modelConfiguration.NumberOfSites;
