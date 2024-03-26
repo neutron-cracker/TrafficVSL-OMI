@@ -3,7 +3,7 @@
 public class CsvModelRunner
 {
     private const int MaximumCars = 100;
-    private const int IterationsWithSameDensity = 1000;
+    private const int IterationsWithSameDensity = 10000;
     private readonly ModelConfiguration _standardModelConfiguration = new(BackBufferSize: 5,
         CarDistance: 1,
         NumberOfSites: 100,
@@ -16,8 +16,7 @@ public class CsvModelRunner
     private readonly List<int> _trafficCount = [];
     private readonly List<double> _trafficJamIntensity = [];
 
-    private readonly Dictionary<string, List<CsvItem>> _allCsvItems2 = new();
-    private readonly List<List<CsvItem>> _allCsvItems = [];
+    private readonly Dictionary<string, List<CsvItem>> _allCsvItems = new();
 
     public void Run()
     {
@@ -51,27 +50,25 @@ public class CsvModelRunner
         _trafficCount.Clear();
         _trafficFlow.Clear();
         _trafficJamIntensity.Clear();
-        List<double> currentTrafficFlow = new(IterationsWithSameDensity);
-        List<double> currentJamIntensity = new(IterationsWithSameDensity);
     
         for (int numberOfCars = 2; numberOfCars < MaximumCars; numberOfCars++)
         {
-            currentTrafficFlow.Clear();
-            currentJamIntensity.Clear();
+            double totalTrafficJamIntensity = 0;
+            double totalTrafficFlow = 0;
 
             road.Reset(numberOfCars);
             road.IterateRounds(100);
             
             for (int numberOfIterations = 0; numberOfIterations < IterationsWithSameDensity; numberOfIterations++)
             {
-                road.IterateRounds(100);
-                currentTrafficFlow.Add(road.TrafficFlow);
-                currentJamIntensity.Add(road.TrafficIntensity);
+                road.IterateRounds(10);
+                totalTrafficFlow += road.TrafficFlow;
+                totalTrafficJamIntensity += road.TrafficIntensity;
             }
             
             _trafficCount.Add(numberOfCars);
-            _trafficFlow.Add(currentTrafficFlow.Average());
-            _trafficJamIntensity.Add(currentJamIntensity.Average());
+            _trafficFlow.Add(totalTrafficFlow / IterationsWithSameDensity);
+            _trafficJamIntensity.Add(totalTrafficJamIntensity / IterationsWithSameDensity);
         }
     }
     
@@ -79,46 +76,46 @@ public class CsvModelRunner
     {
         var newItems = _trafficCount.Zip(_trafficFlow, _trafficJamIntensity)
             .Select(x => new CsvItem(x.First, x.Second, x.Third)).ToList();
-        _allCsvItems2[keyName] = newItems;
+        _allCsvItems[keyName] = newItems;
     }
     
     private IEnumerable<FinalCsvItem> GetCsvItems()
     {
-        var firstKey = _allCsvItems2.First().Key;
-        for (int i = 0; i < _allCsvItems2[firstKey].Count; i++)
+        var firstKey = _allCsvItems.First().Key;
+        for (int i = 0; i < _allCsvItems[firstKey].Count; i++)
         {
             yield return new FinalCsvItem(
-                _allCsvItems2[firstKey][i].TrafficCount,
-                _allCsvItems2["Speed1Size3"][i].TrafficFlow,
-                _allCsvItems2["Speed2Size3"][i].TrafficFlow,
-                _allCsvItems2["Speed3Size3"][i].TrafficFlow,
-                _allCsvItems2["Speed4Size3"][i].TrafficFlow,
-                _allCsvItems2["Speed5Size3"][i].TrafficFlow,
-                _allCsvItems2["Speed1Size5"][i].TrafficFlow,
-                _allCsvItems2["Speed2Size5"][i].TrafficFlow,
-                _allCsvItems2["Speed3Size5"][i].TrafficFlow,
-                _allCsvItems2["Speed4Size5"][i].TrafficFlow,
-                _allCsvItems2["Speed5Size5"][i].TrafficFlow,
-                _allCsvItems2["Speed1Size10"][i].TrafficFlow,
-                _allCsvItems2["Speed2Size10"][i].TrafficFlow,
-                _allCsvItems2["Speed3Size10"][i].TrafficFlow,
-                _allCsvItems2["Speed4Size10"][i].TrafficFlow,
-                _allCsvItems2["Speed5Size10"][i].TrafficFlow,
-                _allCsvItems2["Speed1Size3"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed2Size3"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed3Size3"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed4Size3"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed5Size3"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed1Size5"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed2Size5"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed3Size5"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed4Size5"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed5Size5"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed1Size10"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed2Size10"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed3Size10"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed4Size10"][i].TrafficJamIntensity,
-                _allCsvItems2["Speed5Size10"][i].TrafficJamIntensity
+                _allCsvItems[firstKey][i].TrafficCount,
+                _allCsvItems["Speed1Size3"][i].TrafficFlow,
+                _allCsvItems["Speed2Size3"][i].TrafficFlow,
+                _allCsvItems["Speed3Size3"][i].TrafficFlow,
+                _allCsvItems["Speed4Size3"][i].TrafficFlow,
+                _allCsvItems["Speed5Size3"][i].TrafficFlow,
+                _allCsvItems["Speed1Size5"][i].TrafficFlow,
+                _allCsvItems["Speed2Size5"][i].TrafficFlow,
+                _allCsvItems["Speed3Size5"][i].TrafficFlow,
+                _allCsvItems["Speed4Size5"][i].TrafficFlow,
+                _allCsvItems["Speed5Size5"][i].TrafficFlow,
+                _allCsvItems["Speed1Size10"][i].TrafficFlow,
+                _allCsvItems["Speed2Size10"][i].TrafficFlow,
+                _allCsvItems["Speed3Size10"][i].TrafficFlow,
+                _allCsvItems["Speed4Size10"][i].TrafficFlow,
+                _allCsvItems["Speed5Size10"][i].TrafficFlow,
+                _allCsvItems["Speed1Size3"][i].TrafficJamIntensity,
+                _allCsvItems["Speed2Size3"][i].TrafficJamIntensity,
+                _allCsvItems["Speed3Size3"][i].TrafficJamIntensity,
+                _allCsvItems["Speed4Size3"][i].TrafficJamIntensity,
+                _allCsvItems["Speed5Size3"][i].TrafficJamIntensity,
+                _allCsvItems["Speed1Size5"][i].TrafficJamIntensity,
+                _allCsvItems["Speed2Size5"][i].TrafficJamIntensity,
+                _allCsvItems["Speed3Size5"][i].TrafficJamIntensity,
+                _allCsvItems["Speed4Size5"][i].TrafficJamIntensity,
+                _allCsvItems["Speed5Size5"][i].TrafficJamIntensity,
+                _allCsvItems["Speed1Size10"][i].TrafficJamIntensity,
+                _allCsvItems["Speed2Size10"][i].TrafficJamIntensity,
+                _allCsvItems["Speed3Size10"][i].TrafficJamIntensity,
+                _allCsvItems["Speed4Size10"][i].TrafficJamIntensity,
+                _allCsvItems["Speed5Size10"][i].TrafficJamIntensity
             );
         }
     }

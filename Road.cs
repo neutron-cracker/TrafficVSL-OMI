@@ -67,9 +67,9 @@ public class Road
         
         Random.Shared.Shuffle(allIndices);
 
-        foreach (var carIndex in allIndices.Take(_numberOfCars))
+        foreach (var (carIndex, carId) in allIndices.Take(_numberOfCars).WithIndex())
         {
-            var car = new Car(_numberOfSites)
+            var car = new Car(_numberOfSites, carId)
             {
                 Location = carIndex,
             };

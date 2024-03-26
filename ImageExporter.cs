@@ -6,7 +6,7 @@ namespace TrafficVSL_OMI;
 public class ImageExporter(ModelConfiguration modelConfiguration)
 {
     private readonly Bitmap _bitmap = new(100, 100);
-    private int _currentHeight = 0;
+    private int _currentHeight;
 
     public void PrintLine(Road road)
     {
@@ -35,6 +35,7 @@ public class ImageExporter(ModelConfiguration modelConfiguration)
         3 => Color.FromArgb(102, 255, 102),
         4 => Color.FromArgb(153, 255, 153),
         5 => Color.FromArgb(204, 255, 204),
+        _ => throw new ArgumentOutOfRangeException()
     };
     
     private static Color GetColorWithSpeedLimitForCar(Car car) => car.Speed switch
@@ -45,6 +46,7 @@ public class ImageExporter(ModelConfiguration modelConfiguration)
         3 => Color.FromArgb(102, 102, 255),
         4 => Color.FromArgb(153, 153, 255),
         5 => Color.FromArgb(204, 204, 255),
+        _ => throw new ArgumentOutOfRangeException()
     };
 
     private static Color GetColorInTrafficForCar(Car car) => car.Speed switch
@@ -55,6 +57,7 @@ public class ImageExporter(ModelConfiguration modelConfiguration)
         3 => Color.FromArgb(255, 102, 102),
         4 => Color.FromArgb(255, 153, 153),
         5 => Color.FromArgb(255, 204, 204),
+        _ => throw new ArgumentOutOfRangeException()
     };
 
     public void Export() => _bitmap.Save("../../../traffic-time-space.png", ImageFormat.Png);

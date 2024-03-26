@@ -1,7 +1,8 @@
 ﻿namespace TrafficVSL_OMI;
 
-public class Car(int numberOfSites)
+public class Car(int numberOfSites, int carId)
 {
+    public int CarId { get; } = carId;
     private Car _nextCar = null!;
     public int Speed { get; private set; }
     public required int Location { get; set; }
