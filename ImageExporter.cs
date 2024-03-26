@@ -60,7 +60,7 @@ public class ImageExporter(ModelConfiguration modelConfiguration)
         _ => throw new ArgumentOutOfRangeException()
     };
 
-    public void Export() => _bitmap.Save("../../../traffic-time-space.png", ImageFormat.Png);
+    public void Export(string fileName) => _bitmap.Save($"../../../{fileName}", ImageFormat.Png);
 }
 
 public static class EnumerableExtensions

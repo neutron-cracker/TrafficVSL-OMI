@@ -2,31 +2,31 @@
 
 using TrafficVSL_OMI;
 
-CsvModelRunner runner = new();
-runner.Run();
+// CsvModelRunner runner = new();
+// runner.Run();
 
-// Console.WriteLine("Starting Iterations");
-//
-// var modelConfiguration = ModelConfiguration.Default with
-// {
-//     DynamicSpeedLimit = 5,
-//     BackBufferSize = 10,
-//     CarDistance = 1,
-// };
-// Road road = new(modelConfiguration);
-// ImageExporter exporter = new(modelConfiguration);
-//
-// road.Reset(modelConfiguration.NumberOfCars);
-//
-// for (int i = 0; i < 100; i++)
-// {
-//     road.IterateRounds(1);
-//     exporter.PrintLine(road);
-// }
-//
-// exporter.Export();
-//
-// Console.WriteLine("Finished");
+Console.WriteLine("Starting Iterations");
+
+var modelConfiguration = ModelConfiguration.Default with
+{
+    DynamicSpeedLimit = 1,
+    BackBufferSize = 10,
+    CarDistance = 1,
+};
+Road road = new(modelConfiguration);
+ImageExporter exporter = new(modelConfiguration);
+
+road.Reset(modelConfiguration.NumberOfCars);
+
+for (int i = 0; i < 100; i++)
+{
+    road.IterateRounds(1);
+    exporter.PrintLine(road);
+}
+
+exporter.Export("traffic-flow-limited.png");
+
+Console.WriteLine("Finished");
 
 // Console.WriteLine("Starting Iterations");
 //

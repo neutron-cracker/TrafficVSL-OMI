@@ -42,13 +42,21 @@ public class Car(int numberOfSites, int carId)
     }
 
     public bool HasSpeedLimit(int backBufferSize, int carDistanceInTrafficJam) =>
-        DistanceToCar(_nextCar) <= carDistanceInTrafficJam 
-        || (DistanceToCar(_nextCar) <= backBufferSize
-            && _nextCar.DistanceToCar(_nextCar._nextCar) <= carDistanceInTrafficJam);
+        HasTrafficJamInDistance(carDistanceInTrafficJam, backBufferSize);
 
     public bool IsInTrafficJam(int carDistanceInTrafficJam) 
         => DistanceToCar(_nextCar) <= carDistanceInTrafficJam;
 
+    private bool HasTrafficJamInDistance(int carDistanceInTrafficJam, int distance)
+    {
+        if (IsInTrafficJam(carDistanceInTrafficJam))
+            return true;
+
+        var distanceToNextCar = DistanceToCar(_nextCar);
+        if (distanceToNextCar > distance) return false;
+
+        return _nextCar.HasTrafficJamInDistance(carDistanceInTrafficJam, distance - distanceToNextCar);
+    }
     private int DistanceToCar(Car car)
     {
         var rawDistance = car.Location - Location;

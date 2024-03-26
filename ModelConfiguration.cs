@@ -9,7 +9,8 @@ public record ModelConfiguration(
     float ProbabilityToSlowDown,
     int DynamicSpeedLimit)
 {
-    public static ModelConfiguration Default => new(BackBufferSize: 5,
+    public static ModelConfiguration Default => new(
+        BackBufferSize: 5,
         CarDistance: 1,
         NumberOfSites: 100,
         NumberOfCars: 30,
