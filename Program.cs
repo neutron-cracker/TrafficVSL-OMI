@@ -7,6 +7,29 @@ runner.Run();
 
 // Console.WriteLine("Starting Iterations");
 //
+// var modelConfiguration = ModelConfiguration.Default with
+// {
+//     DynamicSpeedLimit = 5,
+//     BackBufferSize = 10,
+//     CarDistance = 1,
+// };
+// Road road = new(modelConfiguration);
+// ImageExporter exporter = new(modelConfiguration);
+//
+// road.Reset(modelConfiguration.NumberOfCars);
+//
+// for (int i = 0; i < 100; i++)
+// {
+//     road.IterateRounds(1);
+//     exporter.PrintLine(road);
+// }
+//
+// exporter.Export();
+//
+// Console.WriteLine("Finished");
+
+// Console.WriteLine("Starting Iterations");
+//
 // Road road = new(100, 0, 5, 0.35f, 5);
 // road.Reset(30);
 // for (int i = 0; i < 100; i++)

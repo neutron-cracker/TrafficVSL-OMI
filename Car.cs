@@ -36,14 +36,14 @@ public class Car(int numberOfSites)
 
     public void ApplySpeedLimit(int speedLimitJam, int backBufferSize, int carDistanceInTrafficJam)
     {
-        if (Speed > speedLimitJam
-            && (DistanceToCar(_nextCar) <= carDistanceInTrafficJam 
-                || DistanceToCar(_nextCar) <= backBufferSize
-                && DistanceToCar(_nextCar._nextCar) <= carDistanceInTrafficJam))
-        {
+        if (Speed > speedLimitJam && HasSpeedLimit(backBufferSize, carDistanceInTrafficJam)) 
             Speed = speedLimitJam;
-        }
     }
+
+    public bool HasSpeedLimit(int backBufferSize, int carDistanceInTrafficJam) =>
+        DistanceToCar(_nextCar) <= carDistanceInTrafficJam 
+        || (DistanceToCar(_nextCar) <= backBufferSize
+            && _nextCar.DistanceToCar(_nextCar._nextCar) <= carDistanceInTrafficJam);
 
     public bool IsInTrafficJam(int carDistanceInTrafficJam) 
         => DistanceToCar(_nextCar) <= carDistanceInTrafficJam;

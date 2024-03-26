@@ -23,12 +23,12 @@ public class CsvModelRunner
     {
         foreach (var dynamicSpeedLimit in new[] { 1, 2, 3, 4, 5 })
         {
-            foreach (var carDistance in new[] { 3, 5, 10 })
+            foreach (var backBufferSize in new[] { 3, 5, 10 })
             {
                 RunAndSaveModel(_standardModelConfiguration with
                 {
                     DynamicSpeedLimit = dynamicSpeedLimit,
-                    CarDistance = carDistance
+                    BackBufferSize = backBufferSize
                 });
             }
         }
@@ -40,7 +40,7 @@ public class CsvModelRunner
     private void RunAndSaveModel(ModelConfiguration configuration)
     {
         var road = new Road(configuration);
-        var keyName = $"Speed{configuration.DynamicSpeedLimit}Size{configuration.CarDistance}";
+        var keyName = $"Speed{configuration.DynamicSpeedLimit}Size{configuration.BackBufferSize}";
         RunModel(road);
         SaveResultsToCsvItems(keyName);
         Console.WriteLine($"Finished iterations for {keyName}");
