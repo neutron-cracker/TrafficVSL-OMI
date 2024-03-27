@@ -9,7 +9,7 @@ Console.WriteLine("Starting Iterations");
 
 var modelConfiguration = ModelConfiguration.Default with
 {
-    DynamicSpeedLimit = 1,
+    DynamicSpeedLimit = 5,
     BackBufferSize = 10,
     CarDistance = 1,
 };
@@ -24,13 +24,25 @@ for (int i = 0; i < 100; i++)
     exporter.PrintLine(road);
 }
 
-exporter.Export("traffic-flow-limited.png");
+exporter.Export("traffic-flow-not-limited");
 
 Console.WriteLine("Finished");
 
+// ModelConfiguration standardModelConfiguration = new(BackBufferSize: 5,
+//     CarDistance: 1,
+//     NumberOfSites: 100,
+//     NumberOfCars: 0,
+//     MaximumSpeed: 5,
+//     ProbabilityToSlowDown: 0.35f,
+//     DynamicSpeedLimit: 5);
+//
+//
 // Console.WriteLine("Starting Iterations");
 //
-// Road road = new(100, 0, 5, 0.35f, 5);
+// Road road = new(standardModelConfiguration with { DynamicSpeedLimit = 5, BackBufferSize = 10});
+// road.IterateRounds(1000000);
+//
+//
 // road.Reset(30);
 // for (int i = 0; i < 100; i++)
 // {
@@ -41,7 +53,7 @@ Console.WriteLine("Finished");
 // Console.WriteLine();
 // Console.WriteLine();
 //
-// road = new(100, 0, 5, 0.35f, 4);
+// road = new(standardModelConfiguration with { DynamicSpeedLimit = 5, BackBufferSize = 5 });
 // road.Reset(30);
 // for (int i = 0; i < 100; i++)
 // {
@@ -52,7 +64,7 @@ Console.WriteLine("Finished");
 // Console.WriteLine();
 // Console.WriteLine();
 //
-// road = new(100, 0, 5, 0.35f, 3);
+// road = new(standardModelConfiguration with { DynamicSpeedLimit = 5, BackBufferSize = 3 });
 // road.Reset(30);
 // for (int i = 0; i < 100; i++)
 // {
@@ -62,14 +74,6 @@ Console.WriteLine("Finished");
 // Console.WriteLine("Starting Iterations");
 // Console.WriteLine();
 // Console.WriteLine();
-//
-// road = new(100, 0, 5, 0.35f, 2);
-// road.Reset(30);
-// for (int i = 0; i < 100; i++)
-// {
-//     road.IterateRounds(1);
-//     RoadPrinter.PrintDebugLine(road);
-// }
 //
 // return;
 

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace TrafficVSL_OMI;
@@ -60,7 +61,24 @@ public class ImageExporter(ModelConfiguration modelConfiguration)
         _ => throw new ArgumentOutOfRangeException()
     };
 
-    public void Export(string fileName) => _bitmap.Save($"../../../{fileName}", ImageFormat.Png);
+    public void Export(string fileName)
+    {
+        var bitmap2 = new Bitmap(1000, 1000);
+        
+        using var graphics = Graphics.FromImage(bitmap2);
+        graphics.CompositingMode = CompositingMode.SourceCopy;
+        graphics.CompositingQuality = CompositingQuality.HighQuality;
+        graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+        graphics.SmoothingMode = SmoothingMode.None;
+        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        
+        
+        graphics.DrawImage(_bitmap, 0, 0, 1000, 1000);
+        graphics.Transform.Scale(10, 10);
+        
+
+        bitmap2.Save($"../../../Results/{fileName}.jpg", ImageFormat.Jpeg);
+    }
 }
 
 public static class EnumerableExtensions
